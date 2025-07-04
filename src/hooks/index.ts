@@ -1,2 +1,3 @@
-export { useCalendar, type Event } from './useCalendar';
-export { useMobile } from './use-mobile'; 
+export { useCalendar } from './useCalendar';
+export { useMobile } from './use-mobile';
+export { useToast, toast } from './use-toast'; 

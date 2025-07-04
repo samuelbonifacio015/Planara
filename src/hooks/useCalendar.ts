@@ -1,20 +1,11 @@
 import { useState, useEffect } from 'react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay } from 'date-fns';
 import { es } from 'date-fns/locale';
-
-export interface Event {
-  id: string;
-  title: string;
-  description?: string;
-  date: Date;
-  time?: string;
-  color?: string;
-  category?: string;
-}
+import { CalendarEvent } from '@/types/event';
 
 export const useCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   // Obtener el calendario del mes actual
   const monthCalendar = eachDayOfInterval({
@@ -35,8 +26,8 @@ export const useCalendar = () => {
   };
 
   // Agregar evento
-  const addEvent = (eventData: Omit<Event, 'id'>) => {
-    const newEvent: Event = {
+  const addEvent = (eventData: Omit<CalendarEvent, 'id'>) => {
+    const newEvent: CalendarEvent = {
       ...eventData,
       id: crypto.randomUUID()
     };
@@ -44,7 +35,7 @@ export const useCalendar = () => {
   };
 
   // Actualizar evento
-  const updateEvent = (id: string, eventData: Partial<Event>) => {
+  const updateEvent = (id: string, eventData: Partial<CalendarEvent>) => {
     setEvents(prev => 
       prev.map(event => 
         event.id === id ? { ...event, ...eventData } : event
