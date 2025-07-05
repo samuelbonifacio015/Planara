@@ -1,83 +1,95 @@
-import { useState, useEffect } from 'react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay } from 'date-fns';
-import { es } from 'date-fns/locale';
+
+import { useState, useMemo } from 'react';
 import { CalendarEvent } from '@/types/event';
 
 export const useCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([
+    {
+      id: '1',
+      title: 'Reunión de equipo',
+      date: new Date(),
+      startTime: '09:00',
+      endTime: '10:00',
+      type: 'meeting',
+      description: 'Revisión semanal del proyecto'
+    },
+    {
+      id: '2',
+      title: 'Presentación cliente',
+      date: new Date(Date.now() + 86400000),
+      startTime: '14:00',
+      endTime: '15:30',
+      type: 'work',
+      description: 'Presentar propuesta final'
+    }
+  ]);
 
-  // Obtener el calendario del mes actual
-  const monthCalendar = eachDayOfInterval({
-    start: startOfMonth(currentDate),
-    end: endOfMonth(currentDate)
-  });
-
-  // Navegación de meses
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    setCurrentDate(prev => 
-      direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1)
-    );
-  };
-
-  // Ir a hoy
-  const goToToday = () => {
-    setCurrentDate(new Date());
-  };
-
-  // Agregar evento
-  const addEvent = (eventData: Omit<CalendarEvent, 'id'>) => {
+  const addEvent = (event: Omit<CalendarEvent, 'id'>) => {
     const newEvent: CalendarEvent = {
-      ...eventData,
-      id: crypto.randomUUID()
+      ...event,
+      id: Date.now().toString()
     };
     setEvents(prev => [...prev, newEvent]);
   };
 
-  // Actualizar evento
-  const updateEvent = (id: string, eventData: Partial<CalendarEvent>) => {
-    setEvents(prev => 
-      prev.map(event => 
-        event.id === id ? { ...event, ...eventData } : event
-      )
-    );
+  const updateEvent = (id: string, updatedEvent: Partial<CalendarEvent>) => {
+    setEvents(prev => prev.map(event => 
+      event.id === id ? { ...event, ...updatedEvent } : event
+    ));
   };
 
-  // Eliminar evento
   const deleteEvent = (id: string) => {
     setEvents(prev => prev.filter(event => event.id !== id));
   };
 
-  // Obtener eventos por fecha
-  const getEventsByDate = (date: Date) => {
-    return events.filter(event => isSameDay(event.date, date));
+  const getEventsForDate = (date: Date) => {
+    return events.filter(event => 
+      event.date.toDateString() === date.toDateString()
+    );
   };
 
-  // Obtener eventos del mes actual
-  const getMonthEvents = () => {
-    return events.filter(event => isSameMonth(event.date, currentDate));
+  const monthCalendar = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    const days: Date[] = [];
+    for (let i = 0; i < 42; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      days.push(date);
+    }
+    
+    return days;
+  }, [currentDate]);
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + (direction === 'next' ? 1 : -1));
+      return newDate;
+    });
   };
 
-  // Formatear fecha
-  const formatDate = (date: Date, formatStr: string = 'MMMM yyyy') => {
-    return format(date, formatStr, { locale: es });
+  const goToToday = () => {
+    setCurrentDate(new Date());
   };
 
   return {
-    CurrentDate: currentDate,
+    currentDate,
+    setCurrentDate,
     events,
-    monthCalendar,
-    navigateMonth,
-    goToToday,
     addEvent,
     updateEvent,
     deleteEvent,
-    getEventsByDate,
-    getMonthEvents,
-    formatDate,
-    // Utilities
-    isToday: (date: Date) => isToday(date),
-    isSameMonth: (date: Date) => isSameMonth(date, currentDate),
-    isSameDay: (date1: Date, date2: Date) => isSameDay(date1, date2)
+    getEventsForDate,
+    monthCalendar,
+    navigateMonth,
+    goToToday
   };
-}; 
+};

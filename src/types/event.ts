@@ -1,27 +1,27 @@
+
 export interface CalendarEvent {
   id: string;
   title: string;
-  description?: string;
   date: Date;
   startTime: string;
   endTime: string;
-  type: 'work' | 'personal' | 'meeting' | 'reminder';
-  color?: string;
+  type: 'work' | 'personal' | 'meeting';
+  description?: string;
   participants?: string[];
-  reminder?: number;
+  reminder?: number; // minutes before event
   isRecurring?: boolean;
-  recurringType?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  recurringType?: 'daily' | 'weekly' | 'monthly';
 }
 
 export interface EventFormData {
   title: string;
-  description: string;
   date: Date;
   startTime: string;
   endTime: string;
-  type: CalendarEvent['type'];
+  type: 'work' | 'personal' | 'meeting';
+  description: string;
   participants: string;
   reminder: number;
   isRecurring: boolean;
-  recurringType: string;
-} 
+  recurringType: 'daily' | 'weekly' | 'monthly';
+}

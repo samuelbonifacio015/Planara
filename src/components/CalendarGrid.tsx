@@ -8,6 +8,7 @@ interface CalendarGridProps {
   onDateClick: (date: Date) => void;
 }
 
+/* Componente para el calendario */
 const CalendarGrid = ({ days, currentDate, getEventsForDate, onDateClick }: CalendarGridProps) => {
   const today = new Date();
   const currentMonth = currentDate.getMonth();

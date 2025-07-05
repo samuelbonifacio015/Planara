@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CalendarEvent, EventFormData } from '@/types/event';
 
+/* Props para el modal de eventos */
 interface EventModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,6 +19,7 @@ interface EventModalProps {
   editingEvent?: CalendarEvent;
 }
 
+/* Componente para el modal de eventos */
 const EventModal = ({ isOpen, onClose, onSave, selectedDate, editingEvent }: EventModalProps) => {
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
@@ -32,6 +34,7 @@ const EventModal = ({ isOpen, onClose, onSave, selectedDate, editingEvent }: Eve
     recurringType: 'weekly'
   });
 
+  /* Estado para los errores */
   const [errors, setErrors] = useState<Partial<EventFormData>>({});
 
   useEffect(() => {
@@ -53,6 +56,7 @@ const EventModal = ({ isOpen, onClose, onSave, selectedDate, editingEvent }: Eve
     }
   }, [editingEvent, selectedDate]);
 
+  /* Función para validar el formulario */
   const validateForm = (): boolean => {
     const newErrors: Partial<EventFormData> = {};
 
@@ -68,6 +72,7 @@ const EventModal = ({ isOpen, onClose, onSave, selectedDate, editingEvent }: Eve
     return Object.keys(newErrors).length === 0;
   };
 
+  /* Función para manejar el envío del formulario */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -107,6 +112,7 @@ const EventModal = ({ isOpen, onClose, onSave, selectedDate, editingEvent }: Eve
     setErrors({});
   };
 
+  /* Función para cerrar el modal */
   const handleClose = () => {
     onClose();
     setErrors({});

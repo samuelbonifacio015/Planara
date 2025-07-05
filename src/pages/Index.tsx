@@ -1,7 +1,7 @@
+
 import { useState } from 'react';
 import { Plus, Bell, Calendar } from 'lucide-react';
 import { useCalendar } from '@/hooks/useCalendar';
-import { CalendarEvent } from '@/types/event';
 import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/AppSidebar';
 import Header from '@/components/Header';
@@ -11,12 +11,12 @@ import FloatingActionButton from '@/components/FloatingActionButton';
 
 const Index = () => {
   const {
-    CurrentDate,
+    currentDate,
     events,
     addEvent,
     updateEvent,
     deleteEvent,
-    getEventsByDate,
+    getEventsForDate,
     monthCalendar,
     navigateMonth,
     goToToday
@@ -24,7 +24,7 @@ const Index = () => {
 
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [editingEvent, setEditingEvent] = useState<CalendarEvent | undefined>(undefined);
+  const [editingEvent, setEditingEvent] = useState(undefined);
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
@@ -45,39 +45,39 @@ const Index = () => {
       addEvent(eventData);
     }
   };
-  
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
         <AppSidebar onCreateEvent={handleCreateEvent} />
-
+        
         <SidebarInset className="flex-1">
-          {/* Barra de navegación */}
+          {/* Header with sidebar trigger */}
           <div className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-soft">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center space-x-4">
-                <SidebarTrigger className="md:hidden"/>
+                <SidebarTrigger className="md:hidden" />
                 <div className="hidden md:block">
                   <SidebarTrigger />
                 </div>
               </div>
 
-              {/* Botones de navegación */}
+              {/* Navigation controls */}
               <Header
-                currentDate={CurrentDate}
+                currentDate={currentDate}
                 onNavigateMonth={navigateMonth}
                 onGoToToday={goToToday}
               />
             </div>
           </div>
 
-          {/* Contenido principal */}
+          {/* Main content */}
           <main className="p-6">
             <div className="animate-fade-in">
               <CalendarGrid
                 days={monthCalendar}
-                currentDate={CurrentDate}
-                getEventsForDate={getEventsByDate}
+                currentDate={currentDate}
+                getEventsForDate={getEventsForDate}
                 onDateClick={handleDateClick}
               />
             </div>
@@ -90,14 +90,14 @@ const Index = () => {
               editingEvent={editingEvent}
             />
 
-            {/* Botón flotante para crear evento */}
+            {/* Show floating button on mobile when sidebar is collapsed */}
             <div className="md:hidden">
               <FloatingActionButton onClick={handleCreateEvent} />
             </div>
           </main>
 
-                    {/* Welcome section */}
-                    <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* Welcome section */}
+          <div className="max-w-4xl mx-auto px-6 py-8">
             <div className="bg-white rounded-2xl shadow-card p-6 mb-6">
               <div className="text-center">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-3">
@@ -135,7 +135,7 @@ const Index = () => {
         </SidebarInset>
       </div>
     </SidebarProvider>
-  )
+  );
 };
 
 export default Index;

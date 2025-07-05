@@ -68,7 +68,6 @@ const AppSidebar = ({ onCreateEvent }: AppSidebarProps) => {
     if (type === 'event') {
       onCreateEvent();
     }
-    // TODO: Handle task and reminder creation
     console.log(`Creating ${type}`);
   };
 
