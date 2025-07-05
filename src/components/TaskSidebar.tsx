@@ -8,7 +8,10 @@ import {
   Calendar,
   Clock,
   AlertCircle,
-  Search
+  Search,
+  ChevronDown,
+  ChevronRight,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +28,12 @@ import {
   SidebarGroupContent,
   useSidebar,
 } from '@/components/ui/sidebar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface TaskSidebarProps {
   onCreateTask: () => void;
@@ -33,6 +42,8 @@ interface TaskSidebarProps {
 const TaskSidebar = ({ onCreateTask }: TaskSidebarProps) => {
   const { state } = useSidebar();
   const { filter, setFilter, stats } = useTasks();
+  
+  const [myListsExpanded, setMyListsExpanded] = useState(true);
   
   const taskLists = [
     { 
@@ -75,32 +86,61 @@ const TaskSidebar = ({ onCreateTask }: TaskSidebarProps) => {
     }
   ];
 
+  const handleCreateAction = (type: 'task' | 'list' | 'reminder') => {
+    if (type === 'task') {
+      onCreateTask();
+    }
+    console.log(`Creating ${type}`);
+  };
+
   return (
     <Sidebar className="border-r border-gray-200 bg-white">
       <SidebarHeader className="p-4 border-b border-gray-100">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-            <CheckSquare className="h-4 w-4 text-primary" />
-          </div>
+          <CheckSquare className="h-6 w-6 text-primary" />
           {state === 'expanded' && (
-            <div>
-              <span className="text-lg font-semibold text-gray-900">Tareas</span>
-            </div>
+            <span className="text-xl font-semibold text-gray-900">Samify</span>
           )}
         </div>
       </SidebarHeader>
 
       <SidebarContent className="p-4 space-y-6">
-        {/* Botón Crear Tarea */}
+        {/* Botón Crear */}
         <div>
-          <Button 
-            onClick={onCreateTask}
-            className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl shadow-sm transition-all duration-200 font-medium"
-            size={state === 'expanded' ? 'default' : 'icon'}
-          >
-            <Plus className="h-4 w-4" />
-            {state === 'expanded' && <span className="ml-2">Crear tarea</span>}
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-soft transition-all duration-200"
+                size={state === 'expanded' ? 'default' : 'icon'}
+              >
+                <Plus className="h-4 w-4" />
+                {state === 'expanded' && <span className="ml-2">Crear</span>}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-white border border-gray-200 shadow-lg rounded-2xl">
+              <DropdownMenuItem 
+                onClick={() => handleCreateAction('task')}
+                className="hover:bg-gray-50 rounded-xl m-1"
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                Tarea
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleCreateAction('list')}
+                className="hover:bg-gray-50 rounded-xl m-1"
+              >
+                <List className="h-4 w-4 mr-2" />
+                Lista
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleCreateAction('reminder')}
+                className="hover:bg-gray-50 rounded-xl m-1"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Recordatorio
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Búsqueda */}
@@ -109,7 +149,7 @@ const TaskSidebar = ({ onCreateTask }: TaskSidebarProps) => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Buscar tareas"
-              className="pl-10 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20 bg-gray-50 text-sm"
+              className="pl-10 rounded-2xl border-gray-200 focus:border-primary focus:ring-primary"
             />
           </div>
         )}
@@ -151,66 +191,54 @@ const TaskSidebar = ({ onCreateTask }: TaskSidebarProps) => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Listas personalizadas */}
+        {/* Mis Listas */}
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center justify-between text-gray-600 font-medium text-xs uppercase tracking-wider px-3">
-            <span>{state === 'expanded' ? 'Listas' : 'L'}</span>
+          <SidebarGroupLabel className="flex items-center justify-between text-gray-700 font-semibold">
+            <div className="flex items-center">
+              <button
+                onClick={() => setMyListsExpanded(!myListsExpanded)}
+                className="mr-2 hover:bg-gray-100 rounded p-1"
+              >
+                {myListsExpanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </button>
+              {state === 'expanded' && 'Mis listas'}
+            </div>
             {state === 'expanded' && (
-              <Button variant="ghost" size="sm" className="h-5 w-5 p-0 hover:bg-gray-100 rounded">
-                <Plus className="h-3 w-3 text-gray-500" />
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-gray-100">
+                <Plus className="h-3 w-3" />
               </Button>
             )}
           </SidebarGroupLabel>
           
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+          {myListsExpanded && (
+            <SidebarGroupContent className="space-y-2">
               {myLists.map((list) => (
-                <SidebarMenuItem key={list.id}>
-                  <SidebarMenuButton 
-                    className="w-full justify-between hover:bg-gray-50 rounded-lg transition-colors py-2 px-3"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center">
-                        <input 
-                          type="checkbox" 
-                          checked={list.isChecked}
-                          onChange={() => {}}
-                          aria-label={`Mostrar ${list.name}`}
-                          className="w-3 h-3 rounded border-gray-300 text-primary focus:ring-primary/20"
-                        />
-                      </div>
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: list.color }}
-                      />
-                      {state === 'expanded' && (
-                        <span className="text-sm text-gray-700">{list.name}</span>
-                      )}
-                    </div>
-                    {state === 'expanded' && list.count > 0 && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
-                        {list.count}
-                      </span>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <div key={list.id} className="flex items-center space-x-3 py-1 px-2 hover:bg-gray-50 rounded-xl transition-colors">
+                  <input 
+                    type="checkbox" 
+                    checked={list.isChecked}
+                    onChange={() => {}}
+                    aria-label={`Mostrar ${list.name}`}
+                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
+                  />
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: list.color }}
+                  />
+                  {state === 'expanded' && (
+                    <span className="text-sm text-gray-700 flex-1">{list.name}</span>
+                  )}
+                </div>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
+            </SidebarGroupContent>
+          )}
         </SidebarGroup>
 
-        {/* Crear nueva lista */}
-        {state === 'expanded' && (
-          <div className="pt-2">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg py-2 px-3 text-sm"
-            >
-              <Plus className="h-4 w-4 mr-3" />
-              Crear lista
-            </Button>
-          </div>
-        )}
+
 
         {/* Estadísticas rápidas */}
         {state === 'expanded' && stats.overdue > 0 && (

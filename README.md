@@ -1,6 +1,6 @@
-<h1 align = "center">Planara</h1>
+<h1 align = "center">Samify</h1>
 
-<p align = "center"><i> Planara es un calendario web open source creado para uso personal y fines educativos
+<p align = "center"><i> Samify es un calendario web open source creado para uso personal y fines educativos
 </i></p>
 
 <p align = "center">Tecnologias usadas</p>

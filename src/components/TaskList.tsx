@@ -9,12 +9,16 @@ import {
   X,
   Edit3,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  Save
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { useTasks } from '@/hooks/useTasks';
 import { useMobile } from '@/hooks/use-mobile';
 import { Task } from '@/types/task';
@@ -42,12 +46,15 @@ const TaskList = ({ onCreateTask, onEditTask, showQuickAdd: externalShowQuickAdd
     toggleTaskCompletion,
     toggleTaskStarred,
     deleteTask,
-    addTask
+    addTask,
+    updateTask
   } = useTasks();
 
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [internalShowQuickAdd, setInternalShowQuickAdd] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [editingTaskData, setEditingTaskData] = useState<Task | null>(null);
 
   // Usar el estado externo si está disponible, sino usar el interno
   const showQuickAdd = externalShowQuickAdd !== undefined ? externalShowQuickAdd : internalShowQuickAdd;
@@ -143,6 +150,35 @@ const TaskList = ({ onCreateTask, onEditTask, showQuickAdd: externalShowQuickAdd
     } else {
       setInternalShowQuickAdd(false);
     }
+  };
+
+  const handleTaskClick = (task: Task) => {
+    if (selectedTaskId === task.id) {
+      setSelectedTaskId(null);
+      setEditingTaskData(null);
+    } else {
+      setSelectedTaskId(task.id);
+      setEditingTaskData({ ...task });
+    }
+  };
+
+  const handleEditChange = (field: keyof Task, value: any) => {
+    if (editingTaskData) {
+      setEditingTaskData(prev => prev ? { ...prev, [field]: value } : null);
+    }
+  };
+
+  const handleSaveEdit = () => {
+    if (editingTaskData) {
+      updateTask(editingTaskData.id, editingTaskData);
+      setSelectedTaskId(null);
+      setEditingTaskData(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setSelectedTaskId(null);
+    setEditingTaskData(null);
   };
 
   if (tasks.length === 0 && !isAddingTask && !showQuickAdd) {
@@ -243,14 +279,16 @@ const TaskList = ({ onCreateTask, onEditTask, showQuickAdd: externalShowQuickAdd
           {/* Add task button */}
           {!isAddingTask && !showQuickAdd && (
             <div className="p-6">
-              <Button
-                onClick={onCreateTask}
-                variant="ghost"
-                className="w-full justify-center text-primary hover:bg-primary/10 rounded-2xl h-12 max-w-md mx-auto block border-2 border-dashed border-primary/30 hover:border-primary/50"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Agregar una tarea
-              </Button>
+              <div className="max-w-md mx-auto">
+                <Button
+                  onClick={onCreateTask}
+                  variant="ghost"
+                  className="w-full justify-center text-primary hover:bg-primary/10 rounded-2xl h-12 border-2 border-dashed border-primary/30 hover:border-primary/50 transition-colors"
+                >
+                  <Plus className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="whitespace-nowrap">Agregar una tarea</span>
+                </Button>
+              </div>
             </div>
           )}
 
@@ -260,94 +298,227 @@ const TaskList = ({ onCreateTask, onEditTask, showQuickAdd: externalShowQuickAdd
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="divide-y divide-gray-100">
                   {tasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className={`p-6 hover:bg-gray-50 transition-colors ${
-                        task.completed ? 'opacity-60' : ''
-                      }`}
-                    >
-                      <div className="flex items-start space-x-4">
-                        <Checkbox
-                          checked={task.completed}
-                          onCheckedChange={() => toggleTaskCompletion(task.id)}
-                          className="mt-1"
-                        />
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h3 className={`font-medium ${
-                                task.completed ? 'line-through text-gray-500' : 'text-gray-900'
-                              }`}>
-                                {task.title}
-                              </h3>
-                              {task.description && (
-                                <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                              )}
-                              
-                              <div className="flex items-center space-x-4 mt-2">
-                                {task.dueDate && (
-                                  <div className={`flex items-center space-x-1 text-xs ${
-                                    isOverdue(task) ? 'text-red-600' : 'text-gray-500'
-                                  }`}>
-                                    <Calendar className="h-3 w-3" />
-                                    <span>{formatDate(task.dueDate)}</span>
-                                    {isOverdue(task) && <AlertCircle className="h-3 w-3" />}
-                                  </div>
-                                )}
-                                
-                                <Badge variant="secondary" className={getPriorityColor(task.priority)}>
-                                  {getPriorityText(task.priority)}
-                                </Badge>
-                                
-                                {task.subtasks && task.subtasks.length > 0 && (
-                                  <div className="flex items-center space-x-1 text-xs text-gray-500">
-                                    <Check className="h-3 w-3" />
-                                    <span>
-                                      {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                    <DropdownMenu key={task.id} open={selectedTaskId === task.id} onOpenChange={(open) => {
+                      if (open) {
+                        setSelectedTaskId(task.id);
+                      } else {
+                        setSelectedTaskId(null);
+                      }
+                    }}>
+                      <DropdownMenuTrigger asChild>
+                        <div
+                          className={`p-6 hover:bg-gray-50 transition-colors cursor-pointer ${
+                            task.completed ? 'opacity-60' : ''
+                          } ${selectedTaskId === task.id ? 'bg-gray-50' : ''}`}
+                          onClick={() => handleTaskClick(task)}
+                        >
+                          <div className="flex items-start space-x-4">
+                            <Checkbox
+                              checked={task.completed}
+                              onCheckedChange={() => toggleTaskCompletion(task.id)}
+                              className="mt-1"
+                              onClick={(e) => e.stopPropagation()}
+                            />
                             
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                onClick={() => toggleTaskStarred(task.id)}
-                                variant="ghost"
-                                size="sm"
-                                className="p-1 h-auto"
-                              >
-                                <Star className={`h-4 w-4 ${
-                                  task.starred ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
-                                }`} />
-                              </Button>
-                              
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="p-1 h-auto">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <h3 className={`font-medium ${
+                                    task.completed ? 'line-through text-gray-500' : 'text-gray-900'
+                                  }`}>
+                                    {task.title}
+                                  </h3>
+                                  {task.description && (
+                                    <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                                  )}
+                                  
+                                  <div className="flex items-center space-x-4 mt-2">
+                                    {task.dueDate && (
+                                      <div className={`flex items-center space-x-1 text-xs ${
+                                        isOverdue(task) ? 'text-red-600' : 'text-gray-500'
+                                      }`}>
+                                        <Calendar className="h-3 w-3" />
+                                        <span>{formatDate(task.dueDate)}</span>
+                                        {isOverdue(task) && <AlertCircle className="h-3 w-3" />}
+                                      </div>
+                                    )}
+                                    
+                                    <Badge variant="secondary" className={getPriorityColor(task.priority)}>
+                                      {getPriorityText(task.priority)}
+                                    </Badge>
+                                    
+                                    {task.subtasks && task.subtasks.length > 0 && (
+                                      <div className="flex items-center space-x-1 text-xs text-gray-500">
+                                        <Check className="h-3 w-3" />
+                                        <span>
+                                          {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleTaskStarred(task.id);
+                                    }}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="p-1 h-auto"
+                                  >
+                                    <Star className={`h-4 w-4 ${
+                                      task.starred ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
+                                    }`} />
+                                  </Button>
+                                  
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="p-1 h-auto"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
                                     <MoreVertical className="h-4 w-4 text-gray-400" />
                                   </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem onClick={() => onEditTask(task)}>
-                                    <Edit3 className="h-4 w-4 mr-2" />
-                                    Editar
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem 
-                                    onClick={() => deleteTask(task.id)}
-                                    className="text-red-600"
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Eliminar
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-96 bg-white border border-gray-200 shadow-lg rounded-xl p-4 max-h-96 overflow-y-auto">
+                        {editingTaskData && (
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <h3 className="text-lg font-semibold text-gray-900">Editar tarea</h3>
+                              <div className="flex items-center space-x-2">
+                                <Button
+                                  onClick={() => {
+                                    toggleTaskStarred(task.id);
+                                    handleEditChange('starred', !editingTaskData.starred);
+                                  }}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="p-1 h-auto"
+                                >
+                                  <Star className={`h-4 w-4 ${
+                                    editingTaskData.starred ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
+                                  }`} />
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    deleteTask(task.id);
+                                    setSelectedTaskId(null);
+                                  }}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="p-1 h-auto text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+
+                            {/* Título */}
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-title" className="text-sm font-medium text-gray-700">
+                                Título
+                              </Label>
+                              <Input
+                                id="edit-title"
+                                value={editingTaskData.title}
+                                onChange={(e) => handleEditChange('title', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                placeholder="Título de la tarea"
+                              />
+                            </div>
+
+                            {/* Descripción */}
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-description" className="text-sm font-medium text-gray-700">
+                                Descripción
+                              </Label>
+                              <Textarea
+                                id="edit-description"
+                                value={editingTaskData.description || ''}
+                                onChange={(e) => handleEditChange('description', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary resize-none"
+                                placeholder="Descripción de la tarea"
+                                rows={3}
+                              />
+                            </div>
+
+                            {/* Fecha límite */}
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-dueDate" className="text-sm font-medium text-gray-700">
+                                Fecha límite
+                              </Label>
+                              <Input
+                                id="edit-dueDate"
+                                type="date"
+                                value={editingTaskData.dueDate ? editingTaskData.dueDate.toISOString().split('T')[0] : ''}
+                                onChange={(e) => handleEditChange('dueDate', e.target.value ? new Date(e.target.value) : null)}
+                                className="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                              />
+                            </div>
+
+                            {/* Prioridad */}
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-priority" className="text-sm font-medium text-gray-700">
+                                Prioridad
+                              </Label>
+                              <Select value={editingTaskData.priority} onValueChange={(value) => handleEditChange('priority', value)}>
+                                <SelectTrigger className="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="high">Alta</SelectItem>
+                                  <SelectItem value="medium">Media</SelectItem>
+                                  <SelectItem value="low">Baja</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            {/* Categoría */}
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-category" className="text-sm font-medium text-gray-700">
+                                Categoría
+                              </Label>
+                              <Select value={editingTaskData.category} onValueChange={(value) => handleEditChange('category', value)}>
+                                <SelectTrigger className="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="personal">Personal</SelectItem>
+                                  <SelectItem value="work">Trabajo</SelectItem>
+                                  <SelectItem value="family">Familia</SelectItem>
+                                  <SelectItem value="other">Otro</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            {/* Botones */}
+                            <div className="flex space-x-2 pt-4 border-t border-gray-200">
+                              <Button
+                                onClick={handleSaveEdit}
+                                className="flex-1 bg-primary hover:bg-primary/90 text-white rounded-lg"
+                              >
+                                <Save className="h-4 w-4 mr-2" />
+                                Guardar
+                              </Button>
+                              <Button
+                                onClick={handleCancelEdit}
+                                variant="outline"
+                                className="flex-1 rounded-lg"
+                              >
+                                Cancelar
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   ))}
                 </div>
               </div>
