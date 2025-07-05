@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -56,6 +58,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Manrope", sans-serif;
   }
 }
 
@@ -68,14 +71,14 @@
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
-    .animate-fade-in {
+  .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
   }
-  
+
   .animate-scale-up {
     animation: scaleUp 0.2s ease-out;
   }
-  
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -86,7 +89,7 @@
       transform: translateY(0);
     }
   }
-  
+
   @keyframes scaleUp {
     from {
       transform: scale(0.95);
