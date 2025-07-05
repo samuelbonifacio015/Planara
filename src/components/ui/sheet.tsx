@@ -5,6 +5,9 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+// Componente para crear un panel deslizante utilizando @radix-ui/react-dialog.
+// Proporciona elementos como Sheet, SheetTrigger, y SheetOverlay.
+
 const Sheet = SheetPrimitive.Root
 
 const SheetTrigger = SheetPrimitive.Trigger

@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react';
 import { CalendarEvent } from '@/types/event';
 
+// Hook para manejar el calendario.
 export const useCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>([

@@ -4,6 +4,8 @@ import { Check } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+//Checkbox utilizando la biblioteca Radix UI. 
+
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>

@@ -9,6 +9,7 @@ import CalendarGrid from '@/components/CalendarGrid';
 import EventModal from '@/components/EventModal';
 import FloatingActionButton from '@/components/FloatingActionButton';
 
+
 const Index = () => {
   const {
     currentDate,
@@ -52,7 +53,7 @@ const Index = () => {
         <AppSidebar onCreateEvent={handleCreateEvent} />
         
         <SidebarInset className="flex-1">
-          {/* Header with sidebar trigger */}
+          {/* Header con el trigger de la sidebar */}
           <div className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-soft">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center space-x-4">
@@ -62,7 +63,7 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Navigation controls */}
+              {/* Controles de navegación */}
               <Header
                 currentDate={currentDate}
                 onNavigateMonth={navigateMonth}
@@ -71,7 +72,7 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Main content */}
+          {/* Contenido principal */}
           <main className="p-6">
             <div className="animate-fade-in">
               <CalendarGrid
@@ -90,18 +91,18 @@ const Index = () => {
               editingEvent={editingEvent}
             />
 
-            {/* Show floating button on mobile when sidebar is collapsed */}
+            {/* Botón flotante en móvil cuando la sidebar está colapsada */}
             <div className="md:hidden">
               <FloatingActionButton onClick={handleCreateEvent} />
             </div>
           </main>
 
-          {/* Welcome section */}
+          {/* Sección de bienvenida */}
           <div className="max-w-4xl mx-auto px-6 py-8">
             <div className="bg-white rounded-2xl shadow-card p-6 mb-6">
               <div className="text-center">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-                  ¡Bienvenido a CalendarX! 📅
+                  ¡Bienvenido a Samify! 📅
                 </h2>
                 <p className="text-gray-600 mb-4">
                   Tu herramienta de programación de eventos sencilla e intuitiva

@@ -3,9 +3,10 @@ import * as RechartsPrimitive from "recharts"
 
 import { cn } from "@/lib/utils"
 
-// Format: { THEME_NAME: CSS_SELECTOR }
+/* Themes para el chart */
 const THEMES = { light: "", dark: ".dark" } as const
 
+/* Props para el chart */
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode
@@ -16,12 +17,15 @@ export type ChartConfig = {
   )
 }
 
+/* Props para el chart */
 type ChartContextProps = {
   config: ChartConfig
 }
 
+/* Contexto para el chart */
 const ChartContext = React.createContext<ChartContextProps | null>(null)
 
+/* Hook para el chart */
 function useChart() {
   const context = React.useContext(ChartContext)
 
@@ -32,6 +36,7 @@ function useChart() {
   return context
 }
 
+/* Componente para el container del chart */
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -65,6 +70,7 @@ const ChartContainer = React.forwardRef<
 })
 ChartContainer.displayName = "Chart"
 
+/* Componente para el style del chart */
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([_, config]) => config.theme || config.color
@@ -98,8 +104,10 @@ ${colorConfig
   )
 }
 
+/* Componente para el tooltip del chart */
 const ChartTooltip = RechartsPrimitive.Tooltip
 
+/* Componente para el contenido del tooltip del chart */
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
@@ -254,8 +262,10 @@ const ChartTooltipContent = React.forwardRef<
 )
 ChartTooltipContent.displayName = "ChartTooltip"
 
+/* Componente para el legend del chart */
 const ChartLegend = RechartsPrimitive.Legend
 
+/* Componente para el contenido del legend del chart */
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
@@ -314,7 +324,7 @@ const ChartLegendContent = React.forwardRef<
 )
 ChartLegendContent.displayName = "ChartLegend"
 
-// Helper to extract item config from a payload.
+/* Función para obtener la configuración del item del payload */
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,
@@ -353,6 +363,7 @@ function getPayloadConfigFromPayload(
     : config[key as keyof typeof config]
 }
 
+/* Exportación de los componentes del chart */
 export {
   ChartContainer,
   ChartTooltip,

@@ -4,6 +4,12 @@ import { Dot } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+
+// El `input-otp` es un componente de React que permite la creación de un campo de entrada para códigos OTP (One Time Password). 
+// Este componente facilita la captura de códigos de verificación que suelen ser enviados a los usuarios a través de SMS o correo electrónico 
+// para autenticación de dos factores o verificación de identidad. El `input-otp` generalmente divide el código en varios campos de entrada 
+// individuales, permitiendo una experiencia de usuario más intuitiva y fácil de usar. 
+
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
   React.ComponentPropsWithoutRef<typeof OTPInput>

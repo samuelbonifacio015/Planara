@@ -2,21 +2,25 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+/* Props para el header */
 interface HeaderProps {
   currentDate: Date;
   onNavigateMonth: (direction: 'prev' | 'next') => void;
   onGoToToday: () => void;
 }
-
+  
+/* Componente para el header */
 const Header = ({ currentDate, onNavigateMonth, onGoToToday }: HeaderProps) => {
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
 
+  /* Estado para el mes y el año */
   const currentMonth = monthNames[currentDate.getMonth()];
   const currentYear = currentDate.getFullYear();
 
+  /* Renderizado del header */
   return (
     <div className="flex items-center space-x-4">
       <Button

@@ -3,6 +3,8 @@ import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
 
+// ResizablePanelGroup es un componente que permite crear un grupo de paneles reajustables.
+
 const ResizablePanelGroup = ({
   className,
   ...props

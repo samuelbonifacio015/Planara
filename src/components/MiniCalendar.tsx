@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+/* Componente para el mini calendario */
 const MiniCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   
@@ -21,7 +22,7 @@ const MiniCalendar = () => {
     const startDate = new Date(firstDay);
     const endDate = new Date(lastDay);
     
-    // Adjust to start on Sunday
+    /* Ajuste para empezar el domingo */
     startDate.setDate(startDate.getDate() - startDate.getDay());
     
     const days = [];
@@ -37,6 +38,7 @@ const MiniCalendar = () => {
     return days;
   };
 
+  /* Función para navegar entre meses */
   const navigateMonth = (direction: 'prev' | 'next') => {
     setCurrentDate(prev => {
       const newDate = new Date(prev);
@@ -87,7 +89,7 @@ const MiniCalendar = () => {
         </Button>
       </div>
 
-      {/* Day names */}
+      {/* Dias de la semana */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames.map((day) => (
           <div key={day} className="text-center text-xs font-medium text-gray-500 py-1">
@@ -96,7 +98,7 @@ const MiniCalendar = () => {
         ))}
       </div>
 
-      {/* Calendar grid */}
+      {/* Grilla del calendario */}
       <div className="grid grid-cols-7 gap-1">
         {days.map((day, index) => (
           <button

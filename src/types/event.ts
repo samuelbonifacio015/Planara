@@ -8,7 +8,7 @@ export interface CalendarEvent {
   type: 'work' | 'personal' | 'meeting';
   description?: string;
   participants?: string[];
-  reminder?: number; // minutes before event
+  reminder?: number; 
   isRecurring?: boolean;
   recurringType?: 'daily' | 'weekly' | 'monthly';
 }

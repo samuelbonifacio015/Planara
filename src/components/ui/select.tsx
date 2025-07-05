@@ -4,6 +4,12 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// Utiliza la biblioteca `@radix-ui/react-select` para crear un elemento de selección personalizado.
+// Este componente permite elegir una opción de un conjunto desplegable.
+// Utiliza varios componentes de `SelectPrimitive` como `Root`, `Group`, `Value`, `Trigger`, `ScrollUpButton`, y `ScrollDownButton` para construir la funcionalidad completa del selector. 
+// Además, se integran iconos de `lucide-react`
+
+/* Componente para el select */
 const Select = SelectPrimitive.Root
 
 const SelectGroup = SelectPrimitive.Group

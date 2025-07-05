@@ -4,14 +4,21 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// Dialog es un componente que permite crear un diálogo.
+
+/* Componente para el dialog */
 const Dialog = DialogPrimitive.Root
 
+/* Componente para el trigger del dialog */
 const DialogTrigger = DialogPrimitive.Trigger
 
+/* Componente para el portal del dialog */
 const DialogPortal = DialogPrimitive.Portal
 
+/* Componente para el close del dialog */
 const DialogClose = DialogPrimitive.Close
 
+/* Componente para el overlay del dialog */
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -27,6 +34,7 @@ const DialogOverlay = React.forwardRef<
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
+/* Componente para el content del dialog */
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
@@ -51,6 +59,7 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+/* Componente para el header del dialog */
 const DialogHeader = ({
   className,
   ...props
@@ -65,6 +74,7 @@ const DialogHeader = ({
 )
 DialogHeader.displayName = "DialogHeader"
 
+/* Componente para el footer del dialog */
 const DialogFooter = ({
   className,
   ...props
@@ -79,6 +89,7 @@ const DialogFooter = ({
 )
 DialogFooter.displayName = "DialogFooter"
 
+/* Componente para el title del dialog */
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
@@ -94,6 +105,7 @@ const DialogTitle = React.forwardRef<
 ))
 DialogTitle.displayName = DialogPrimitive.Title.displayName
 
+/* Componente para la descripción del dialog */
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
@@ -106,6 +118,7 @@ const DialogDescription = React.forwardRef<
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
+/* Exportación de los componentes del dialog */
 export {
   Dialog,
   DialogPortal,

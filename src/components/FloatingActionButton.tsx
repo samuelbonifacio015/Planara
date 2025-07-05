@@ -6,6 +6,7 @@ interface FloatingActionButtonProps {
   onClick: () => void;
 }
 
+/* Componente para el botón flotante */
 const FloatingActionButton = ({ onClick }: FloatingActionButtonProps) => {
   return (
     <Button
